@@ -73,13 +73,17 @@ export default async function BookDetail({ params }: { params: Promise<{ id: str
       </div>
 
       <div className={styles.relatedSection}>
-        <h2 className={styles.relatedTitle}>Buku Lainnya</h2>
-        <div className={styles.grid}>
+        <div className={styles.sectionHeader}>
+          <h2>Buku Lainnya</h2>
+        </div>
+        <div className={styles.horizontalScroll}>
           {mockBooks
             .filter((b) => b.id !== book.id)
-            .slice(0, 5)
+            .slice(0, 10)
             .map((relatedBook) => (
-              <BookCard key={relatedBook.id} book={relatedBook} />
+              <div key={relatedBook.id} className={styles.scrollItem}>
+                <BookCard book={relatedBook} />
+              </div>
           ))}
         </div>
       </div>

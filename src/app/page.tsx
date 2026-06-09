@@ -6,34 +6,105 @@ import BookCard from '@/components/BookCard';
 import { mockBooks } from '@/lib/mockData';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BookOpen, ShoppingBag, FileText, ShieldCheck } from 'lucide-react';
+import { BookOpen, ShoppingBag, FileText, ShieldCheck, ChevronRight } from 'lucide-react';
 
 export default function Home() {
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const heroSliderRef = useRef<HTMLDivElement>(null);
 
+  // Auto slide for hero section (optional)
   useEffect(() => {
-    const slider = sliderRef.current;
+    const slider = heroSliderRef.current;
     if (!slider) return;
 
-    let scrollAmount = 0;
     const slideTimer = setInterval(() => {
       if (slider.scrollWidth - slider.clientWidth <= slider.scrollLeft + 10) {
         slider.scrollTo({ left: 0, behavior: 'smooth' });
       } else {
         slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
       }
-    }, 4000);
+    }, 5000);
 
     return () => clearInterval(slideTimer);
   }, []);
+
   return (
     <div className="animate-fade-in">
-      {/* Welcome & Services Section */}
+      
+      {/* Hero Featured Books (Like Play Books Header Carousel) */}
+      <section className={styles.heroSliderSection}>
+        <div className={styles.heroSliderContainer} ref={heroSliderRef}>
+          {mockBooks.slice(0, 3).map((book) => (
+            <div key={`hero-${book.id}`} className={styles.heroSlideItem}>
+              <Image src={book.coverUrl} alt={book.title} fill className={styles.heroSlideImage} />
+              <div className={styles.heroSlideOverlay}>
+                <h2 className={styles.heroSlideTitle}>{book.title}</h2>
+                <p className={styles.heroSlideDesc}>{book.synopsis}</p>
+                <Link href={`/buku/${book.id}`} className={styles.heroSlideBtn}>
+                  Lihat Buku
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Catalog Sliders */}
+      <section className={styles.catalogSection}>
+        <div className={styles.sectionHeader}>
+          <h2>Ebook Populer</h2>
+          <Link href="/katalog" className={styles.seeAllLink}>
+            Lihat semua <ChevronRight size={16} />
+          </Link>
+        </div>
+        <div className={styles.horizontalScroll}>
+          {mockBooks.map((book) => (
+            <div key={`populer-${book.id}`} className={styles.scrollItem}>
+              <BookCard book={book} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.catalogSection}>
+        <div className={styles.sectionHeader}>
+          <h2>Rilis Baru</h2>
+          <Link href="/katalog" className={styles.seeAllLink}>
+            Lihat semua <ChevronRight size={16} />
+          </Link>
+        </div>
+        <div className={styles.horizontalScroll}>
+          {/* Reverse mock data just to show something different */}
+          {[...mockBooks].reverse().map((book) => (
+            <div key={`baru-${book.id}`} className={styles.scrollItem}>
+              <BookCard book={book} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.catalogSection}>
+        <div className={styles.sectionHeader}>
+          <h2>Pilihan Editor</h2>
+          <Link href="/katalog" className={styles.seeAllLink}>
+            Lihat semua <ChevronRight size={16} />
+          </Link>
+        </div>
+        <div className={styles.horizontalScroll}>
+          {/* Slice data just to show something different */}
+          {mockBooks.slice(3, 8).map((book) => (
+            <div key={`editor-${book.id}`} className={styles.scrollItem}>
+              <BookCard book={book} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Welcome & Services Section moved to bottom */}
       <section className={styles.welcomeSection}>
         <div className={styles.welcomeHeader}>
-          <h2 className={styles.welcomeTitle}>Selamat Datang di <span className="gradient-text">PenerbitWeb</span></h2>
+          <h2 className={styles.welcomeTitle}>Layanan <span className="gradient-text">PenerbitWeb</span></h2>
           <p className={styles.welcomeDesc}>
-            PenerbitWeb adalah Perusahaan penerbitan, anggota IKAPI dan percetakan buku, sekaligus penyedia Jasa Konversi KTI (Skripsi, Tesis, dan Disertasi) ber-ISBN siap terbit. Kami juga melayani pengadaan bahan pustaka terpercaya dengan legalitas resmi.
+            Selain menyediakan buku digital berkualitas, kami juga hadir dengan berbagai layanan penerbitan terpadu.
           </p>
         </div>
 
@@ -43,7 +114,7 @@ export default function Home() {
               <BookOpen size={32} />
             </div>
             <h3>Penerbitan Buku</h3>
-            <p>Menawarkan paket penerbitan Indie dan Mayor (masuk toko buku nasional) yang disesuaikan dengan kebutuhan setiap penulis.</p>
+            <p>Menawarkan paket penerbitan Indie dan Mayor yang disesuaikan dengan kebutuhan penulis.</p>
           </div>
 
           <div className={`glass-panel ${styles.serviceCard}`}>
@@ -51,15 +122,15 @@ export default function Home() {
               <ShoppingBag size={32} />
             </div>
             <h3>Toko Buku Online</h3>
-            <p>Katalog buku lengkap yang bisa dipesan melalui web ini maupun *marketplace* ternama (Tokopedia, Shopee, dll).</p>
+            <p>Pesan buku fisik langsung melalui web ini maupun *marketplace* ternama.</p>
           </div>
 
           <div className={`glass-panel ${styles.serviceCard}`}>
             <div className={styles.serviceIconWrapper}>
               <FileText size={32} />
             </div>
-            <h3>Konversi KTI Jadi Buku</h3>
-            <p>Ubah Skripsi, Tesis, atau Disertasi Anda menjadi buku ber-ISBN secara profesional tanpa ribet.</p>
+            <h3>Konversi KTI</h3>
+            <p>Ubah Skripsi, Tesis, atau Disertasi Anda menjadi buku ber-ISBN secara profesional.</p>
           </div>
 
           <div className={`glass-panel ${styles.serviceCard}`}>
@@ -67,46 +138,11 @@ export default function Home() {
               <ShieldCheck size={32} />
             </div>
             <h3>Pengurusan HAKI</h3>
-            <p>Kami bantu lindungi Hak atas Kekayaan Intelektual karya Anda agar diakui secara hukum dan bebas dari plagiasi.</p>
+            <p>Lindungi Hak atas Kekayaan Intelektual karya Anda agar diakui secara hukum.</p>
           </div>
         </div>
       </section>
 
-      <section className={styles.sliderSection}>
-        <div className={styles.sliderContainer} ref={sliderRef}>
-          {/* Menggunakan mockBooks pertama dan kedua sebagai slide unggulan */}
-          {mockBooks.slice(0, 3).map((book) => (
-            <div key={`slide-${book.id}`} className={styles.slideItem}>
-              <Image 
-                src={book.coverUrl} 
-                alt={book.title} 
-                fill 
-                className={styles.slideImage} 
-                priority 
-              />
-              <div className={styles.slideOverlay}>
-                <h2 className={styles.slideTitle}>{book.title}</h2>
-                <p className={styles.slideDesc}>{book.synopsis.substring(0, 100)}...</p>
-                <Link href={`/buku/${book.id}`} className={styles.slideBtn}>
-                  Lihat Detail Buku
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-      
-      <section className={styles.catalogSection}>
-        <div className={styles.sectionHeader}>
-          <h2>Katalog Terbaru</h2>
-        </div>
-        
-        <div className={styles.grid}>
-          {mockBooks.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
