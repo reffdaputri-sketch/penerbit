@@ -12,14 +12,18 @@ export default function Home() {
   const heroSliderRef = useRef<HTMLDivElement>(null);
 
   const [books, setBooks] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
 
   // Fetch from Supabase
   useEffect(() => {
-    async function fetchBooks() {
-      const { data } = await supabase.from('books').select('*, categories(name)').order('created_at', { ascending: false });
-      if (data) setBooks(data);
+    async function fetchData() {
+      const { data: booksData } = await supabase.from('books').select('*, categories(name)').order('created_at', { ascending: false });
+      if (booksData) setBooks(booksData);
+
+      const { data: catData } = await supabase.from('categories').select('*').order('name');
+      if (catData) setCategories(catData);
     }
-    fetchBooks();
+    fetchData();
   }, []);
 
   // Auto slide for hero section (optional)
@@ -65,6 +69,19 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Category Slider */}
+      {categories && categories.length > 0 && (
+        <section className={styles.categorySliderSection}>
+          <div className={styles.horizontalScroll} style={{ gap: '0.75rem' }}>
+            {categories.map((cat) => (
+              <Link key={`cat-${cat.id}`} href={`/katalog?kategori=${cat.slug}`} className={styles.categoryChip}>
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Catalog Sliders */}
       <section className={styles.catalogSection}>
