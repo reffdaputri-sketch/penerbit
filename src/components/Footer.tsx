@@ -37,10 +37,10 @@ export default function Footer() {
         <div className={styles.linksSection}>
           <h4 className={styles.linkTitle}>Bantuan</h4>
           <ul className={styles.linkList}>
-            <li><Link href="#">Cara Belanja</Link></li>
-            <li><Link href="#">Pengiriman</Link></li>
-            <li><Link href="#">FAQ</Link></li>
-            <li><Link href="#">Hubungi Kami</Link></li>
+            <li><Link href="/info/cara-belanja">Cara Belanja</Link></li>
+            <li><Link href="/info/pengiriman">Pengiriman</Link></li>
+            <li><Link href="/info/faq">FAQ</Link></li>
+            <li><Link href="/info/hubungi-kami">Hubungi Kami</Link></li>
           </ul>
         </div>
       </div>
@@ -49,8 +49,8 @@ export default function Footer() {
         <div className={`container ${styles.bottomContent}`}>
           <p>&copy; {new Date().getFullYear()} PenerbitWeb. Hak Cipta Dilindungi.</p>
           <div className={styles.bottomLinks}>
-            <Link href="#">Kebijakan Privasi</Link>
-            <Link href="#">Syarat & Ketentuan</Link>
+            <Link href="/info/kebijakan-privasi">Kebijakan Privasi</Link>
+            <Link href="/info/syarat-ketentuan">Syarat & Ketentuan</Link>
           </div>
         </div>
       </div>

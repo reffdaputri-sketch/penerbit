@@ -1,15 +1,26 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
 import BookCard from '@/components/BookCard';
-import { mockBooks } from '@/lib/mockData';
+import { supabase } from '@/lib/supabaseClient';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BookOpen, ShoppingBag, FileText, ShieldCheck, ChevronRight } from 'lucide-react';
 
 export default function Home() {
   const heroSliderRef = useRef<HTMLDivElement>(null);
+
+  const [books, setBooks] = useState<any[]>([]);
+
+  // Fetch from Supabase
+  useEffect(() => {
+    async function fetchBooks() {
+      const { data } = await supabase.from('books').select('*').order('created_at', { ascending: false });
+      if (data) setBooks(data);
+    }
+    fetchBooks();
+  }, []);
 
   // Auto slide for hero section (optional)
   useEffect(() => {
@@ -25,7 +36,14 @@ export default function Home() {
     }, 5000);
 
     return () => clearInterval(slideTimer);
-  }, []);
+  }, [books]);
+
+  if (books.length === 0) {
+    return <div style={{ padding: '4rem', textAlign: 'center' }}>Memuat data...</div>;
+  }
+
+  const featuredBooks = books.filter(b => b.is_featured);
+  const sliderBooks = featuredBooks.length > 0 ? featuredBooks : books.slice(0, 3);
 
   return (
     <div className="animate-fade-in">
@@ -33,7 +51,7 @@ export default function Home() {
       {/* Hero Featured Books (Like Play Books Header Carousel) */}
       <section className={styles.heroSliderSection}>
         <div className={styles.heroSliderContainer} ref={heroSliderRef}>
-          {mockBooks.slice(0, 3).map((book) => (
+          {sliderBooks.map((book) => (
             <div key={`hero-${book.id}`} className={styles.heroSlideItem}>
               <Image src={book.coverUrl} alt={book.title} fill className={styles.heroSlideImage} />
               <div className={styles.heroSlideOverlay}>
@@ -57,7 +75,7 @@ export default function Home() {
           </Link>
         </div>
         <div className={styles.horizontalScroll}>
-          {mockBooks.map((book) => (
+          {books.map((book) => (
             <div key={`populer-${book.id}`} className={styles.scrollItem}>
               <BookCard book={book} />
             </div>
@@ -73,8 +91,8 @@ export default function Home() {
           </Link>
         </div>
         <div className={styles.horizontalScroll}>
-          {/* Reverse mock data just to show something different */}
-          {[...mockBooks].reverse().map((book) => (
+          {/* Reverse data just to show something different */}
+          {[...books].reverse().map((book) => (
             <div key={`baru-${book.id}`} className={styles.scrollItem}>
               <BookCard book={book} />
             </div>
@@ -91,7 +109,7 @@ export default function Home() {
         </div>
         <div className={styles.horizontalScroll}>
           {/* Slice data just to show something different */}
-          {mockBooks.slice(3, 8).map((book) => (
+          {books.slice(3, 8).map((book) => (
             <div key={`editor-${book.id}`} className={styles.scrollItem}>
               <BookCard book={book} />
             </div>

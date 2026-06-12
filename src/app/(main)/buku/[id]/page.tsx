@@ -1,18 +1,28 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ShoppingCart, Calendar, Hash } from 'lucide-react';
+import { ArrowLeft, Calendar, Hash } from 'lucide-react';
 import styles from './detail.module.css';
-import { mockBooks } from '@/lib/mockData';
+import { supabase } from '@/lib/supabaseClient';
 import BookCard from '@/components/BookCard';
+import CheckoutForm from '@/components/CheckoutForm';
 
 export default async function BookDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
-  const book = mockBooks.find((b) => b.id === resolvedParams.id);
+  
+  // Fetch specific book
+  const { data: book } = await supabase.from('books').select('*').eq('id', resolvedParams.id).single();
   
   if (!book) {
     notFound();
   }
+
+  // Fetch related books (excluding the current one)
+  const { data: relatedBooks } = await supabase
+    .from('books')
+    .select('*')
+    .neq('id', book.id)
+    .limit(10);
 
   return (
     <div className={`animate-fade-in ${styles.container}`}>
@@ -64,29 +74,25 @@ export default async function BookDetail({ params }: { params: Promise<{ id: str
           </div>
 
           <div className={styles.actions}>
-            <button className={styles.ctaButton}>
-              <ShoppingCart size={20} />
-              Beli Sekarang
-            </button>
+            <CheckoutForm book={book} />
           </div>
         </div>
       </div>
 
-      <div className={styles.relatedSection}>
-        <div className={styles.sectionHeader}>
-          <h2>Buku Lainnya</h2>
-        </div>
-        <div className={styles.horizontalScroll}>
-          {mockBooks
-            .filter((b) => b.id !== book.id)
-            .slice(0, 10)
-            .map((relatedBook) => (
+      {relatedBooks && relatedBooks.length > 0 && (
+        <div className={styles.relatedSection}>
+          <div className={styles.sectionHeader}>
+            <h2>Buku Lainnya</h2>
+          </div>
+          <div className={styles.horizontalScroll}>
+            {relatedBooks.map((relatedBook: any) => (
               <div key={relatedBook.id} className={styles.scrollItem}>
                 <BookCard book={relatedBook} />
               </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
