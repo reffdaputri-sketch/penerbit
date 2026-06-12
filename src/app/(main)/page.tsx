@@ -16,7 +16,7 @@ export default function Home() {
   // Fetch from Supabase
   useEffect(() => {
     async function fetchBooks() {
-      const { data } = await supabase.from('books').select('*').order('created_at', { ascending: false });
+      const { data } = await supabase.from('books').select('*, categories(name)').order('created_at', { ascending: false });
       if (data) setBooks(data);
     }
     fetchBooks();

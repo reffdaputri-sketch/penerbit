@@ -11,7 +11,7 @@ export default async function BookDetail({ params }: { params: Promise<{ id: str
   const resolvedParams = await params;
   
   // Fetch specific book
-  const { data: book } = await supabase.from('books').select('*').eq('id', resolvedParams.id).single();
+  const { data: book } = await supabase.from('books').select('*, categories(name)').eq('id', resolvedParams.id).single();
   
   if (!book) {
     notFound();
@@ -20,7 +20,7 @@ export default async function BookDetail({ params }: { params: Promise<{ id: str
   // Fetch related books (excluding the current one)
   const { data: relatedBooks } = await supabase
     .from('books')
-    .select('*')
+    .select('*, categories(name)')
     .neq('id', book.id)
     .limit(10);
 
@@ -47,6 +47,22 @@ export default async function BookDetail({ params }: { params: Promise<{ id: str
         
         <div className={styles.detailsSection}>
           <div className={styles.header}>
+            {book.categories?.name && (
+              <div style={{ marginBottom: '0.5rem' }}>
+                <span style={{ 
+                  fontSize: '0.8rem', 
+                  backgroundColor: 'var(--accent-primary)', 
+                  color: 'white', 
+                  padding: '0.2rem 0.6rem', 
+                  borderRadius: '4px',
+                  fontWeight: 500,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
+                }}>
+                  {book.categories.name}
+                </span>
+              </div>
+            )}
             <h1 className={styles.title}>{book.title}</h1>
             <p className={styles.author}>Oleh <span className="gradient-text">{book.author}</span></p>
           </div>

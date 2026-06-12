@@ -6,7 +6,7 @@ import styles from './katalog.module.css';
 export const revalidate = 60;
 
 export default async function Katalog() {
-  const { data: books } = await supabase.from('books').select('*').order('created_at', { ascending: false });
+  const { data: books } = await supabase.from('books').select('*, categories(name)').order('created_at', { ascending: false });
 
   return (
     <div className={`animate-fade-in ${styles.katalogContainer}`}>

@@ -83,6 +83,13 @@ export default function AdminLayout({
             Kelola Buku
           </Link>
           <Link 
+            href="/admin/categories" 
+            className={`${styles.navLink} ${pathname?.startsWith('/admin/categories') ? styles.navLinkActive : ''}`}
+          >
+            <LayoutDashboard size={20} />
+            Kategori Buku
+          </Link>
+          <Link 
             href="/admin/slider" 
             className={`${styles.navLink} ${pathname?.startsWith('/admin/slider') ? styles.navLinkActive : ''}`}
           >

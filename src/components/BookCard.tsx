@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styles from './BookCard.module.css';
 import { Book } from '@/lib/mockData';
 
-export default function BookCard({ book }: { book: Book }) {
+export default function BookCard({ book }: { book: any }) {
   return (
     <Link href={`/buku/${book.id}`} className={styles.cardLink}>
       <div className={styles.card}>
@@ -16,6 +16,9 @@ export default function BookCard({ book }: { book: Book }) {
           />
         </div>
         <div className={styles.content}>
+          {book.categories?.name && (
+            <span className={styles.categoryBadge}>{book.categories.name}</span>
+          )}
           <h3 className={styles.title}>{book.title}</h3>
           <p className={styles.author}>{book.author}</p>
           <p className={styles.priceTag}>

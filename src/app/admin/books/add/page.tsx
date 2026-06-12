@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabaseClient';
 export default function AdminAddBook() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -17,10 +18,19 @@ export default function AdminAddBook() {
     price: '',
     coverUrl: '',
     publishedDate: '',
-    isbn: ''
+    isbn: '',
+    category_id: ''
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  React.useEffect(() => {
+    async function fetchCategories() {
+      const { data } = await supabase.from('categories').select('*').order('name');
+      if (data) setCategories(data);
+    }
+    fetchCategories();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -30,7 +40,8 @@ export default function AdminAddBook() {
 
     const bookData = {
       ...formData,
-      price: parseInt(formData.price) || 0
+      price: parseInt(formData.price) || 0,
+      category_id: formData.category_id || null
     };
 
     const { error } = await supabase.from('books').insert([bookData]);
@@ -70,17 +81,36 @@ export default function AdminAddBook() {
             />
           </div>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="author">Penulis</label>
-            <input 
-              required
-              type="text" 
-              id="author" 
-              name="author" 
-              className={styles.input} 
-              value={formData.author} 
-              onChange={handleChange} 
-            />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="author">Penulis</label>
+              <input 
+                required
+                type="text" 
+                id="author" 
+                name="author" 
+                className={styles.input} 
+                value={formData.author} 
+                onChange={handleChange} 
+              />
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="category_id">Kategori</label>
+              <select
+                id="category_id"
+                name="category_id"
+                className={styles.input}
+                value={formData.category_id}
+                onChange={handleChange}
+                required
+              >
+                <option value="">-- Pilih Kategori --</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className={styles.formGroup}>
