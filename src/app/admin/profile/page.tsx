@@ -15,7 +15,8 @@ export default function AdminProfile() {
     address: '',
     email: '',
     phone: '',
-    logoUrl: ''
+    logoUrl: '',
+    whatsapp_admin: ''
   });
 
   useEffect(() => {
@@ -59,7 +60,8 @@ export default function AdminProfile() {
           address: formData.address,
           email: formData.email,
           phone: formData.phone,
-          logoUrl: formData.logoUrl
+          logoUrl: formData.logoUrl,
+          whatsapp_admin: formData.whatsapp_admin
         })
         .eq('id', formData.id);
       errorResult = error;
@@ -73,7 +75,8 @@ export default function AdminProfile() {
           address: formData.address,
           email: formData.email,
           phone: formData.phone,
-          logoUrl: formData.logoUrl
+          logoUrl: formData.logoUrl,
+          whatsapp_admin: formData.whatsapp_admin
         }]);
       errorResult = error;
     }
@@ -176,6 +179,24 @@ export default function AdminProfile() {
                 onChange={handleChange}
                 placeholder="https://example.com/logo.png"
               />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label} htmlFor="whatsapp_admin">
+                📱 Nomor WhatsApp Admin (untuk notifikasi pesanan)
+              </label>
+              <input 
+                type="text" 
+                id="whatsapp_admin" 
+                name="whatsapp_admin" 
+                className={styles.input} 
+                value={formData.whatsapp_admin} 
+                onChange={handleChange}
+                placeholder="628xxxxxxxxxx (format internasional, tanpa + atau spasi)"
+              />
+              <small style={{ color: '#888', marginTop: '0.4rem', display: 'block' }}>
+                Contoh: 6281234567890 — Digunakan untuk menerima notifikasi pesanan via WhatsApp otomatis.
+              </small>
             </div>
 
             <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
