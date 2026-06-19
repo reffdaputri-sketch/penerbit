@@ -11,7 +11,6 @@ export default function CheckoutForm({ book }: { book: any }) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [adminWa, setAdminWa] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,18 +18,12 @@ export default function CheckoutForm({ book }: { book: any }) {
     address: ''
   });
 
+  // Nomor WA admin dari environment variable
+  const adminWa = process.env.NEXT_PUBLIC_ADMIN_WA || '';
+
   // Ensure portal target is available (client only)
   useEffect(() => {
     setMounted(true);
-    // Ambil nomor WA admin dari profil perusahaan
-    supabase
-      .from('company_profile')
-      .select('whatsapp_admin')
-      .limit(1)
-      .single()
-      .then(({ data }) => {
-        if (data?.whatsapp_admin) setAdminWa(data.whatsapp_admin);
-      });
   }, []);
 
   // Lock body scroll when modal is open
